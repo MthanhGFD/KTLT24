@@ -3,6 +3,7 @@
 
 using namespace std;
 
+<<<<<<< HEAD
 struct SINHVIEN{
     char MaSV[10];
     bool GioiTinh; //True: Nam, False: nữ
@@ -10,3 +11,6 @@ struct SINHVIEN{
     string HoTenSV;
     int TrungBinhHK;
 };
+=======
+//a
+>>>>>>> 2462547114a7dc7b933a0ddaf60c181bf6bc4972
