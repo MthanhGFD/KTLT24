@@ -1,2 +1,1 @@
-<p align="center"><a target="_blank"><img src="https://media.tenor.com/OVGuQPg2SFEAAAAj/pepe-saber-transparent-png.gif" width="400"></a></p>
-Sigma Ohio Skibidi
+<p align="center"><a target="_blank"><img src="https://media.discordapp.net/attachments/630708693448523786/1181149159546437753/kokona_munch.gif?ex=67e7ae60&is=67e65ce0&hm=2e66963797b2820fd2daf6263e05e5c2d17defe14c117e5a34ef358859c28c25&" width="400"></a></p>
