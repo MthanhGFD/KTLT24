@@ -10,3 +10,5 @@ struct SINHVIEN{
     string HoTenSV;
     int TrungBinhHK;
 };
+
+//Danh sách
