@@ -8,7 +8,10 @@ struct SINHVIEN{
     bool GioiTinh; //True: Nam, False: nữ
     char NamSinh[4];
     string HoTenSV;
-    int TrungBinhHK;
+    double TrungBinhHK;
 };
 
+int main (){
+    cout <<"hello there !!!"<<endl;
+}
 //Danh sách
