@@ -1,1 +1,10 @@
-<p align="center"><a target="_blank"><img src="https://media.discordapp.net/attachments/630708693448523786/1181149159546437753/kokona_munch.gif?ex=67e7ae60&is=67e65ce0&hm=2e66963797b2820fd2daf6263e05e5c2d17defe14c117e5a34ef358859c28c25&" width="400"></a></p>
+Vì tôi không tìm được cách nào để không chạy cái ftstream hoặc vector bên c++ nên tôi quyết định dùng c
+cách chạy qlsv
+đầu tiên ở terminal nhập cd qlsv
+sau đó nhập các câu lệnh sau
+gcc main.c dangnhap.c sinhvien.c diemso.c menu.c -o program.exe
+nhập ./program.exe để chạy chương trình trên terminal
+check file dangnhap.txt để nhập ma và mk
+hiện tại vẫn chưa thực hiện được 2 chức năng đầu ở SV và GV
+SV : xuất thông tin + điểm số
+GV : thêm sv + cập nhật thông tin sv (và các ý khác)
