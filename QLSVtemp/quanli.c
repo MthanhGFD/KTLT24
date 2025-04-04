@@ -38,10 +38,12 @@ void docThongTinSinhVien() {
         return;
     }
 
-    while (fscanf(file, "%s %s %s %d", sinhVienList[soLuongSinhVien].MaSV, sinhVienList[soLuongSinhVien].HoTenSV,
-            sinhVienList[soLuongSinhVien].GioiTinh, &sinhVienList[soLuongSinhVien].NamSinh) != EOF) {
-        soLuongSinhVien++;
-    }
+    while (fscanf(file, "%s %s %d %[^\n]", sinhVienList[soLuongSinhVien].MaSV,
+        sinhVienList[soLuongSinhVien].GioiTinh,
+        &sinhVienList[soLuongSinhVien].NamSinh,
+        sinhVienList[soLuongSinhVien].HoTenSV) != EOF) {
+soLuongSinhVien++;
+}
 
     fclose(file);
 }
