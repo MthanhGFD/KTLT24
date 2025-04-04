@@ -32,4 +32,5 @@
 3121411195 Nam 2003 Nguyen Minh Thanh
 3121411213 Nam 2003 Nguyen Ba Khanh Trinh
 3121411218 Nam 2003 Pham Hoang Lam Truong
-3121411224 Nu 2003 Ngo Anh Thanh Tuoi
+3121411224 Nu 2003 Ngo Anh Thanh Tuoinewbie Nam 2001 Duongdxq
+
