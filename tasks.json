@@ -1,0 +1,21 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "type": "shell",
+        "label": "C/C++: Build and Run",
+        "command": "cmd",
+        "args": [
+          "/c",
+          "C:/msys64/ucrt64/bin/gcc.exe -g \"${file}\" -o \"${fileDirname}/${fileBasenameNoExtension}.exe\" && \"${fileDirname}/${fileBasenameNoExtension}.exe\""
+        ],
+        "group": {
+          "kind": "build",
+          "isDefault": true
+        },
+        "problemMatcher": ["$gcc"],
+        "detail": "Compile and run C file using MSYS2 GCC"
+      }
+    ]
+  }
+  
