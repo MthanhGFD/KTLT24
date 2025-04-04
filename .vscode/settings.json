@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "sinhvien.h": "c",
-        "qlsv.h": "c"
+        "qlsv.h": "c",
+        "ostream": "cpp"
     }
 }
