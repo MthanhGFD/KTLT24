@@ -32,7 +32,7 @@ int soLuongTaiKhoan = 0;
 
 // Hàm đọc dữ liệu từ file
 void docThongTinSinhVien() {
-    FILE *file = fopen("thongtinSV.txt", "r");
+    FILE *file = fopen("C:/Users/admin/Desktop/KTLT24/QLSVtemp/thongtinSV.txt", "r");
     if (!file) {
         printf("Khong the mo file thongtinSV.txt.\n");
         return;
@@ -42,9 +42,8 @@ void docThongTinSinhVien() {
         sinhVienList[soLuongSinhVien].GioiTinh,
         &sinhVienList[soLuongSinhVien].NamSinh,
         sinhVienList[soLuongSinhVien].HoTenSV) != EOF) {
-soLuongSinhVien++;
+    soLuongSinhVien++; // Đọc và lưu lại mảng
 }
-
     fclose(file);
 }
 
@@ -54,7 +53,7 @@ void tinhDiemTrungBinh(SINHVIEN *sinhVien, DIEMSO diem) {
 }
 
 void docDiemSoSinhVien() {
-    FILE *file = fopen("diemso.txt", "r");
+    FILE *file = fopen("C:/Users/admin/Desktop/KTLT24/QLSVtemp/diemso.txt", "r");
     if (!file) {
         printf("Khong the mo file diemso.txt.\n");
         return;
@@ -63,11 +62,11 @@ void docDiemSoSinhVien() {
     while (fscanf(file, "%s %f %f %f", diemList[soLuongDiem].MaSV, 
         &diemList[soLuongDiem].KTLT, 
         &diemList[soLuongDiem].MMT, 
-        &diemList[soLuongDiem].CTDL) == 4) {  // Đảm bảo đọc đúng 4 phần tử mỗi lần
+        &diemList[soLuongDiem].CTDL) != EOF) {
         // Tìm sinh viên theo MaSV và tính điểm trung bình
         for (int i = 0; i < soLuongSinhVien; ++i) {
             if (strcmp(sinhVienList[i].MaSV, diemList[soLuongDiem].MaSV) == 0) {
-                // Gọi hàm tính điểm trung bình
+                // Tính điểm trung bình
                 tinhDiemTrungBinh(&sinhVienList[i], diemList[soLuongDiem]);
                 break;
             }
@@ -78,61 +77,55 @@ void docDiemSoSinhVien() {
     fclose(file);
 }
 
-
 // Hàm đăng nhập
 void docThongTinDangNhap() {
-    FILE *file = fopen("dangnhap.txt", "r");
+    FILE *file = fopen("C:/Users/admin/Desktop/KTLT24/QLSVtemp/dangnhap.txt", "r");
     if (!file) {
         printf("Khong the mo file dangnhap.txt.\n");
         return;
     }
 
-    while (fscanf(file, "%s %s", dangNhapList[soLuongTaiKhoan].MaSV, dangNhapList[soLuongTaiKhoan].MATKHAU) == 2) {
-        if (soLuongTaiKhoan >= MAX) {
-            printf("Danh sach tai khoan day!\n");
-            break;
-        }
+    while (fscanf(file, "%s %s", dangNhapList[soLuongTaiKhoan].MaSV, dangNhapList[soLuongTaiKhoan].MATKHAU) != EOF) {
         soLuongTaiKhoan++;
     }
 
     fclose(file);
 }
 
-
 bool dangNhap(char *maSVDangNhap) {
     char MaSV[20], MatKhau[20];
     int soLanSai = 0;
     bool isLoggedIn = false;
-    bool isMaSVExist = false;
+    bool MaSVTonTai = false;
 
     while (1) {
-        printf("Nhap MaSV (hoac 'exit' de thoat): ");
+        printf("Nhap MaSV ('exit' de thoat): ");
         scanf("%s", MaSV);
 
         // Kiểm tra nếu người dùng muốn thoát
         if (strcmp(MaSV, "exit") == 0) {
             printf("Thoat chuong trinh.\n");
-            exit(0); // Thoát chương trình ngay lập tức
+            exit(0);
         }
 
         // Kiểm tra xem mã sinh viên có tồn tại trong danh sách tài khoản không
-        isMaSVExist = false; // Reset lại trạng thái
+        MaSVTonTai = false;
         for (int i = 0; i < soLuongTaiKhoan; i++) {
             if (strcmp(dangNhapList[i].MaSV, MaSV) == 0) {
-                isMaSVExist = true;
+                MaSVTonTai = true;
                 break;
             }
         }
 
-        // Nếu mã sinh viên không tồn tại, yêu cầu nhập lại
-        if (!isMaSVExist) {
-            printf("MaSV khong ton tai. Vui long nhap lai hoac nhap 'exit' de thoat.\n");
-            continue; // Quay lại vòng lặp để nhập lại mã sinh viên
+        // Nếu mã sinh viên không tồn tại
+        if (!MaSVTonTai) {
+            printf("MaSV khong ton tai. Vui long nhap lai.\n");
+            continue;
         }
 
-        // Nếu mã sinh viên tồn tại, yêu cầu nhập mật khẩu
+        // Nếu mã sinh viên tồn tại
         while (soLanSai < 5) {
-            printf("Nhap MatKhau: ");
+            printf("Nhap mat khau: ");
             scanf("%s", MatKhau);
 
             for (int i = 0; i < soLuongTaiKhoan; i++) {
@@ -149,7 +142,7 @@ bool dangNhap(char *maSVDangNhap) {
                 return true;
             } else {
                 soLanSai++;
-                printf("Sai MatKhau. Ban con %d lan thu lai.\n", 5 - soLanSai);
+                printf("Sai mat khau. Ban con %d lan thu lai.\n", 5 - soLanSai);
             }
         }
 
@@ -158,10 +151,9 @@ bool dangNhap(char *maSVDangNhap) {
     }
 }
 
-
 void xoaSinhVien() {
     char MaSV[20];
-    printf("Nhap MaSV cua sinh vien can xoa: ");
+    printf("Nhap ma sinh vien can xoa: ");
     scanf("%s", MaSV);
 
     int found = 0;
@@ -191,14 +183,12 @@ void xoaSinhVien() {
             printf("Loi khi luu du lieu sau khi xoa sinh vien.\n");
         }
     } else {
-        printf("Sinh vien voi MaSV %s khong ton tai.\n", MaSV);
+        printf("Sinh vien voi ma %s khong ton tai.\n", MaSV);
     }
 }
 
-
-
-void hienThiDanhSachSinhVienKhongCanhBao() {
-    printf("Danh sach sinh vien khong bi canh bao (TrungbinhHK >= 4):\n");
+void hienKhongCanhBao() {
+    printf("Danh sach sinh vien khong bi canh bao:\n");
 
     int found = 0;
     for (int i = 0; i < soLuongSinhVien; i++) {
@@ -215,14 +205,14 @@ void hienThiDanhSachSinhVienKhongCanhBao() {
 }
 
 void xuatDanhSachSinhVien() {
-    FILE *file = fopen("thongtinSV_export.txt", "w");
+    FILE *file = fopen("C:/Users/admin/Desktop/KTLT24/QLSVtemp/thongtinSV_export.txt", "w");
     if (file) {
         for (int i = 0; i < soLuongSinhVien; i++) {
             fprintf(file, "%s %s %d %s %.2f\n", sinhVienList[i].MaSV, sinhVienList[i].GioiTinh,
                     sinhVienList[i].NamSinh, sinhVienList[i].HoTenSV, sinhVienList[i].TrungbinhHK);
         }
         fclose(file);
-        printf("Danh sach sinh vien da duoc xuat ra file thongtinSV_export.txt!\n");
+        printf("Danh sach sinh vien da duoc xuat ra.\n");
     } else {
         printf("Loi khi xuat danh sach sinh vien ra file.\n");
     }
@@ -257,7 +247,7 @@ void timKiemSinhVien() {
 void hienThiThongTinSinhVien(char* maSV) {
     for (int i = 0; i < soLuongSinhVien; i++) {
         if (strcmp(sinhVienList[i].MaSV, maSV) == 0) {
-            printf("MaSV: %s\n", sinhVienList[i].MaSV);
+            printf("\nMaSV: %s\n", sinhVienList[i].MaSV);
             printf("Ho Ten: %s\n", sinhVienList[i].HoTenSV);
             printf("Gioi Tinh: %s\n", sinhVienList[i].GioiTinh);
             printf("Nam Sinh: %d\n", sinhVienList[i].NamSinh);
@@ -271,7 +261,7 @@ void hienThiThongTinSinhVien(char* maSV) {
 void hienThiDiemSoSinhVien(char* maSV) {
     for (int i = 0; i < soLuongDiem; i++) {
         if (strcmp(diemList[i].MaSV, maSV) == 0) {
-            printf("MaSV: %s\n", diemList[i].MaSV);
+            printf("\nMaSV: %s\n", diemList[i].MaSV);
             printf("KTLT: %.2f\n", diemList[i].KTLT);
             printf("MMT: %.2f\n", diemList[i].MMT);
             printf("CTDL: %.2f\n", diemList[i].CTDL);
@@ -293,7 +283,7 @@ void themSinhVien() {
     printf("Nhap Nam Sinh: ");
     scanf("%d", &sinhVienMoi.NamSinh);
 
-    // Tính điểm trung bình học kỳ (vì chưa có điểm số, tạm để 0.0)
+    // Tính điểm trung bình học kỳ
     sinhVienMoi.TrungbinhHK = 0.0;
 
     // Thêm sinh viên vào danh sách
@@ -301,7 +291,7 @@ void themSinhVien() {
     soLuongSinhVien++;
 
     // Lưu lại vào file "thongtinSV.txt"
-    FILE *file = fopen("thongtinSV.txt", "a");
+    FILE *file = fopen("C:/Users/admin/Desktop/KTLT24/QLSVtemp/thongtinSV.txt", "a");
     if (file) {
         fprintf(file, "%s %s %d %s\n", sinhVienMoi.MaSV, sinhVienMoi.GioiTinh,
                 sinhVienMoi.NamSinh, sinhVienMoi.HoTenSV);
@@ -314,21 +304,21 @@ void themSinhVien() {
     // Tạo tài khoản cho sinh viên mới
     DANGNHAP taiKhoanMoi;
     strcpy(taiKhoanMoi.MaSV, sinhVienMoi.MaSV);
-    // Mật khẩu mặc định cho sinh viên mới là "123456" (hoặc bạn có thể cho phép nhập mật khẩu)
+    // Mật khẩu mặc định: "123456"
     strcpy(taiKhoanMoi.MATKHAU, "123456");
 
     // Lưu tài khoản vào file "dangnhap.txt"
-    file = fopen("dangnhap.txt", "a");
+    file = fopen("C:/Users/admin/Desktop/KTLT24/QLSVtemp/dangnhap.txt", "a");
     if (file) {
-        fprintf(file, "%s %s\n", taiKhoanMoi.MaSV, taiKhoanMoi.MATKHAU);
+        fprintf(file, "\n%s %s\n", taiKhoanMoi.MaSV, taiKhoanMoi.MATKHAU);
         fclose(file);
-        printf("Tai khoan sinh vien da duoc tao thanh cong!\n");
+        printf("Tai khoan sinh vien da duoc tao thanh cong\n");
     } else {
         printf("Loi khi luu du lieu tai khoan.\n");
     }
 }
 
-void capNhatThongTinSinhVien() {
+void capNhatThongTin() {
     char MaSV[20];
     printf("Nhap MaSV cua sinh vien can cap nhat: ");
     scanf("%s", MaSV);
@@ -347,8 +337,8 @@ void capNhatThongTinSinhVien() {
             printf("Nhap Nam Sinh moi: ");
             scanf("%d", &sinhVienList[i].NamSinh);
 
-            // Tính lại điểm trung bình học kỳ (vì có thể có thay đổi về điểm số)
-            sinhVienList[i].TrungbinhHK = 0.0;  // Tạm thời để 0.0 hoặc tính lại từ điểm số
+            // Tính lại điểm trung bình học kỳ
+            sinhVienList[i].TrungbinhHK = 0.0;
 
             // Lưu lại vào file "thongtinSV.txt" sau khi cập nhật
             FILE *file = fopen("thongtinSV.txt", "w");
@@ -358,7 +348,7 @@ void capNhatThongTinSinhVien() {
                             sinhVienList[j].NamSinh, sinhVienList[j].HoTenSV);
                 }
                 fclose(file);
-                printf("Thong tin sinh vien da duoc cap nhat!\n");
+                printf("Thong tin sinh vien da duoc cap nhat.\n");
             } else {
                 printf("Loi khi cap nhat thong tin sinh vien.\n");
             }
@@ -369,6 +359,58 @@ void capNhatThongTinSinhVien() {
 
     if (!found) {
         printf("Sinh vien voi MaSV %s khong ton tai.\n", MaSV);
+    }
+}
+
+void doiMatKhau(char *maSV) {
+    char matKhauCu[20], matKhauMoi[20], matKhauXacNhan[20];
+    int found = 0;
+
+    // Tìm tài khoản trong danh sách
+    for (int i = 0; i < soLuongTaiKhoan; i++) {
+        if (strcmp(dangNhapList[i].MaSV, maSV) == 0) {
+            found = 1;
+            printf("Nhap mat khau cu: ");
+            scanf("%s", matKhauCu);
+
+            // Kiểm tra mật khẩu cũ
+            if (strcmp(dangNhapList[i].MATKHAU, matKhauCu) != 0) {
+                printf("Mat khau cu khong chinh xac!\n");
+                return;
+            }
+
+            // Nhập mật khẩu mới
+            printf("Nhap mat khau moi: ");
+            scanf("%s", matKhauMoi);
+            printf("Xac nhan mat khau moi: ");
+            scanf("%s", matKhauXacNhan);
+
+            if (strcmp(matKhauMoi, matKhauXacNhan) != 0) {
+                printf("Mat khau moi khong khop. Vui long thu lai!\n");
+                return;
+            }
+
+            strcpy(dangNhapList[i].MATKHAU, matKhauMoi);
+            printf("Doi mat khau thanh cong!\n");
+
+            // Ghi lại danh sách vào file
+            FILE *file = fopen("C:/Users/admin/Desktop/KTLT24/QLSVtemp/dangnhap.txt", "w");
+            if (file) {
+                for (int j = 0; j < soLuongTaiKhoan; j++) {
+                    fprintf(file, "%s %s\n", dangNhapList[j].MaSV, dangNhapList[j].MATKHAU);
+                }
+                fclose(file);
+                printf("Mat khau da duoc cap nhat.\n");
+            } else {
+                printf("Loi.\n");
+            }
+
+            return;
+        }
+    }
+
+    if (!found) {
+        printf("Tai khoan khong ton tai!\n");
     }
 }
 
@@ -393,7 +435,7 @@ void hienThiMenu(char *maSV) {
                     themSinhVien();
                     break;
                 case 2:
-                    capNhatThongTinSinhVien();
+                    capNhatThongTin();
                     break;
                 case 3:
                     xoaSinhVien();
@@ -402,7 +444,7 @@ void hienThiMenu(char *maSV) {
                     timKiemSinhVien();
                     break;
                 case 5:
-                    hienThiDanhSachSinhVienKhongCanhBao();
+                    hienKhongCanhBao();
                     break;
                 case 6:
                     xuatDanhSachSinhVien();
@@ -417,7 +459,8 @@ void hienThiMenu(char *maSV) {
         } else {
             printf("\n1. Xem thong tin sinh vien\n");
             printf("2. Xem diem so sinh vien\n");
-            printf("3. Thoat\n");
+            printf("3. Doi mat khau\n");
+            printf("4. Thoat\n");
 
             printf("Chon chuc nang: ");
             scanf("%d", &luaChon);
@@ -430,6 +473,9 @@ void hienThiMenu(char *maSV) {
                     hienThiDiemSoSinhVien(maSV);
                     break;
                 case 3:
+                    doiMatKhau(maSV);
+                    break;
+                case 4:
                     printf("Thoat chuong trinh.\n");
                     return;
                 default:
