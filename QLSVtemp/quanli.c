@@ -48,6 +48,11 @@ soLuongSinhVien++;
     fclose(file);
 }
 
+// Hàm tính điểm trung bình học kỳ cho sinh viên
+void tinhDiemTrungBinh(SINHVIEN *sinhVien, DIEMSO diem) {
+    sinhVien->TrungbinhHK = (diem.KTLT * 4 + diem.MMT * 3 + diem.CTDL * 3) / 10;
+}
+
 void docDiemSoSinhVien() {
     FILE *file = fopen("diemso.txt", "r");
     if (!file) {
@@ -58,13 +63,12 @@ void docDiemSoSinhVien() {
     while (fscanf(file, "%s %f %f %f", diemList[soLuongDiem].MaSV, 
         &diemList[soLuongDiem].KTLT, 
         &diemList[soLuongDiem].MMT, 
-        &diemList[soLuongDiem].CTDL) != EOF) {
+        &diemList[soLuongDiem].CTDL) == 4) {  // Đảm bảo đọc đúng 4 phần tử mỗi lần
         // Tìm sinh viên theo MaSV và tính điểm trung bình
         for (int i = 0; i < soLuongSinhVien; ++i) {
             if (strcmp(sinhVienList[i].MaSV, diemList[soLuongDiem].MaSV) == 0) {
-                sinhVienList[i].TrungbinhHK = (diemList[soLuongDiem].KTLT * 4 + 
-                                                diemList[soLuongDiem].MMT * 3 + 
-                                                diemList[soLuongDiem].CTDL * 3) / 10;
+                // Gọi hàm tính điểm trung bình
+                tinhDiemTrungBinh(&sinhVienList[i], diemList[soLuongDiem]);
                 break;
             }
         }
@@ -74,6 +78,7 @@ void docDiemSoSinhVien() {
     fclose(file);
 }
 
+
 // Hàm đăng nhập
 void docThongTinDangNhap() {
     FILE *file = fopen("dangnhap.txt", "r");
@@ -82,12 +87,17 @@ void docThongTinDangNhap() {
         return;
     }
 
-    while (fscanf(file, "%s %s", dangNhapList[soLuongTaiKhoan].MaSV, dangNhapList[soLuongTaiKhoan].MATKHAU) != EOF) {
+    while (fscanf(file, "%s %s", dangNhapList[soLuongTaiKhoan].MaSV, dangNhapList[soLuongTaiKhoan].MATKHAU) == 2) {
+        if (soLuongTaiKhoan >= MAX) {
+            printf("Danh sach tai khoan day!\n");
+            break;
+        }
         soLuongTaiKhoan++;
     }
 
     fclose(file);
 }
+
 
 bool dangNhap(char *maSVDangNhap) {
     char MaSV[20], MatKhau[20];
@@ -148,8 +158,100 @@ bool dangNhap(char *maSVDangNhap) {
     }
 }
 
-// Hàm tính điểm trung bình học kỳ
-void tinhDiemTrungBinh();
+
+void xoaSinhVien() {
+    char MaSV[20];
+    printf("Nhap MaSV cua sinh vien can xoa: ");
+    scanf("%s", MaSV);
+
+    int found = 0;
+    for (int i = 0; i < soLuongSinhVien; i++) {
+        if (strcmp(sinhVienList[i].MaSV, MaSV) == 0) {
+            found = 1;
+            // Xóa sinh viên bằng cách dịch chuyển các sinh viên còn lại
+            for (int j = i; j < soLuongSinhVien - 1; j++) {
+                sinhVienList[j] = sinhVienList[j + 1];
+            }
+            soLuongSinhVien--;
+            break;
+        }
+    }
+
+    if (found) {
+        // Lưu lại danh sách sinh viên vào file sau khi xóa
+        FILE *file = fopen("thongtinSV.txt", "w");
+        if (file) {
+            for (int i = 0; i < soLuongSinhVien; i++) {
+                fprintf(file, "%s %s %d %s\n", sinhVienList[i].MaSV, sinhVienList[i].GioiTinh,
+                        sinhVienList[i].NamSinh, sinhVienList[i].HoTenSV);
+            }
+            fclose(file);
+            printf("Sinh vien da duoc xoa thanh cong!\n");
+        } else {
+            printf("Loi khi luu du lieu sau khi xoa sinh vien.\n");
+        }
+    } else {
+        printf("Sinh vien voi MaSV %s khong ton tai.\n", MaSV);
+    }
+}
+
+
+
+void hienThiDanhSachSinhVienKhongCanhBao() {
+    printf("Danh sach sinh vien khong bi canh bao (TrungbinhHK >= 4):\n");
+
+    int found = 0;
+    for (int i = 0; i < soLuongSinhVien; i++) {
+        if (sinhVienList[i].TrungbinhHK >= 4.0) {
+            found = 1;
+            printf("MaSV: %s, Ho Ten: %s, Trung Binh HK: %.2f\n", sinhVienList[i].MaSV,
+                   sinhVienList[i].HoTenSV, sinhVienList[i].TrungbinhHK);
+        }
+    }
+
+    if (!found) {
+        printf("Khong co sinh vien nao thoa man dieu kien.\n");
+    }
+}
+
+void xuatDanhSachSinhVien() {
+    FILE *file = fopen("thongtinSV_export.txt", "w");
+    if (file) {
+        for (int i = 0; i < soLuongSinhVien; i++) {
+            fprintf(file, "%s %s %d %s %.2f\n", sinhVienList[i].MaSV, sinhVienList[i].GioiTinh,
+                    sinhVienList[i].NamSinh, sinhVienList[i].HoTenSV, sinhVienList[i].TrungbinhHK);
+        }
+        fclose(file);
+        printf("Danh sach sinh vien da duoc xuat ra file thongtinSV_export.txt!\n");
+    } else {
+        printf("Loi khi xuat danh sach sinh vien ra file.\n");
+    }
+}
+
+// Hàm tìm kiếm sinh viên theo mã sinh viên
+void timKiemSinhVien() {
+    char MaSV[20];
+    printf("Nhap MaSV cua sinh vien can tim: ");
+    scanf("%s", MaSV);
+
+    int found = 0;
+    for (int i = 0; i < soLuongSinhVien; i++) {
+        if (strcmp(sinhVienList[i].MaSV, MaSV) == 0) {
+            found = 1;
+            printf("Thong tin sinh vien tim duoc:\n");
+            printf("MaSV: %s\n", sinhVienList[i].MaSV);
+            printf("Ho Ten: %s\n", sinhVienList[i].HoTenSV);
+            printf("Gioi Tinh: %s\n", sinhVienList[i].GioiTinh);
+            printf("Nam Sinh: %d\n", sinhVienList[i].NamSinh);
+            printf("Trung Binh HK: %.2f\n", sinhVienList[i].TrungbinhHK);
+            break;
+        }
+    }
+
+    if (!found) {
+        printf("Sinh vien voi MaSV %s khong ton tai.\n", MaSV);
+    }
+}
 
 //Menu
 void hienThiThongTinSinhVien(char* maSV) {
@@ -273,23 +375,39 @@ void capNhatThongTinSinhVien() {
 void hienThiMenu(char *maSV) {
     int luaChon;
 
-    while(1) {
+    while (1) {
         // Nếu là giảng viên (MaSV == 11377), hiển thị menu giảng viên
         if (strcmp(maSV, "11377") == 0) {
             printf("\n1. Them sinh vien\n");
             printf("2. Cap nhat thong tin sinh vien\n");
-            printf("3. Thoat\n");
+            printf("3. Xoa sinh vien\n");
+            printf("4. Tim kiem sinh vien\n");
+            printf("5. Hien thi danh sach sinh vien khong canh bao\n");
+            printf("6. Xuat danh sach sinh vien ra file\n");
+            printf("7. Thoat\n");
             printf("Chon chuc nang: ");
             scanf("%d", &luaChon);
 
             switch (luaChon) {
                 case 1:
-                    themSinhVien();  // Gọi hàm thêm sinh viên
+                    themSinhVien();
                     break;
                 case 2:
-                    capNhatThongTinSinhVien();  // Gọi hàm cập nhật thông tin sinh viên
+                    capNhatThongTinSinhVien();
                     break;
                 case 3:
+                    xoaSinhVien();
+                    break;
+                case 4:
+                    timKiemSinhVien();
+                    break;
+                case 5:
+                    hienThiDanhSachSinhVienKhongCanhBao();
+                    break;
+                case 6:
+                    xuatDanhSachSinhVien();
+                    break;
+                case 7:
                     printf("Thoat chuong trinh.\n");
                     return; // Thoát khỏi menu
                 default:
@@ -297,7 +415,6 @@ void hienThiMenu(char *maSV) {
                     break;
             }
         } else {
-            // Nếu là sinh viên, chỉ hiển thị các chức năng của sinh viên
             printf("\n1. Xem thong tin sinh vien\n");
             printf("2. Xem diem so sinh vien\n");
             printf("3. Thoat\n");
@@ -307,14 +424,14 @@ void hienThiMenu(char *maSV) {
 
             switch (luaChon) {
                 case 1:
-                    hienThiThongTinSinhVien(maSV);  // Hiển thị thông tin sinh viên
+                    hienThiThongTinSinhVien(maSV);
                     break;
                 case 2:
-                    hienThiDiemSoSinhVien(maSV);    // Hiển thị điểm số sinh viên
+                    hienThiDiemSoSinhVien(maSV);
                     break;
                 case 3:
                     printf("Thoat chuong trinh.\n");
-                    return; // Thoát khỏi chương trình
+                    return;
                 default:
                     printf("Lua chon khong hop le.\n");
                     break;
@@ -322,6 +439,7 @@ void hienThiMenu(char *maSV) {
         }
     }
 }
+
 
 
 //CHẠY CHƯƠNG TRÌNH:
