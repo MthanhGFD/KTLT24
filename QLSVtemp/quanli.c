@@ -28,6 +28,7 @@ SINHVIEN sinhVienList[MAX];
 DIEMSO diemList[MAX];
 int soLuongSinhVien = 0;
 int soLuongDiem = 0;
+int soLuongTaiKhoan = 0;
 
 // Hàm đọc dữ liệu từ file
 void docThongTinSinhVien() {
@@ -79,15 +80,14 @@ void docThongTinDangNhap() {
         return;
     }
 
-    int i = 0;
-    while (fscanf(file, "%s %s", dangNhapList[i].MaSV, dangNhapList[i].MATKHAU) != EOF) {
-        i++;
+    while (fscanf(file, "%s %s", dangNhapList[soLuongTaiKhoan].MaSV, dangNhapList[soLuongTaiKhoan].MATKHAU) != EOF) {
+        soLuongTaiKhoan++;
     }
 
     fclose(file);
 }
 
-bool dangNhap() {
+bool dangNhap(char *maSVDangNhap) {
     char MaSV[20], MatKhau[20];
     int soLanSai = 0;
     bool isLoggedIn = false;
@@ -95,33 +95,32 @@ bool dangNhap() {
     printf("Nhap MaSV: ");
     scanf("%s", MaSV);
     
-
-    // Kiểm tra đăng nhập
     while (soLanSai < 5) {
         printf("Nhap MatKhau: ");
         scanf("%s", MatKhau);
         
-        for (int i = 0; i < MAX; i++) {
+        for (int i = 0; i < soLuongTaiKhoan; i++) {
             if (strcmp(dangNhapList[i].MaSV, MaSV) == 0 && 
                 strcmp(dangNhapList[i].MATKHAU, MatKhau) == 0) {
                 isLoggedIn = true;
+                strcpy(maSVDangNhap, MaSV); // Gán mã sinh viên ra ngoài
                 break;
             }
-        }
+        }        
 
         if (isLoggedIn) {
             printf("Dang nhap thanh cong.\n");
             return true;
-        } 
-        else 
-        {
+        } else {
             soLanSai++;
             printf("Sai MaSV hoac MatKhau. Ban con %d lan thu lai.\n", 5 - soLanSai);
         }
     }
+
     printf("Dang nhap khong thanh cong. Thoat chuong trinh.\n");
-    return false; // Thoát nếu sai quá 5 lần
+    return false;
 }
+
 
 // Hàm tính điểm trung bình học kỳ
 void tinhDiemTrungBinh();
@@ -142,7 +141,7 @@ void hienThiThongTinSinhVien(char* maSV) {
 }
 
 void hienThiDiemSoSinhVien(char* maSV) {
-    for (int i = 0; i < soLuongSinhVien; i++) {
+    for (int i = 0; i < soLuongDiem; i++) {
         if (strcmp(diemList[i].MaSV, maSV) == 0) {
             printf("MaSV: %s\n", diemList[i].MaSV);
             printf("KTLT: %.2f\n", diemList[i].KTLT);
@@ -191,7 +190,7 @@ int main() {
     docThongTinDangNhap();
 
     // Đăng nhập
-    if (dangNhap()) {
+    if (dangNhap(MaSV)) {
         hienThiMenu(MaSV); // Tiến hành các chức năng menu sinh viên/giảng viên
     } else {
         
