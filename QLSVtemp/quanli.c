@@ -440,8 +440,6 @@ void hienThiMenu(char *maSV) {
     }
 }
 
-
-
 //CHẠY CHƯƠNG TRÌNH:
 int main() {
     char MaSV[20];
